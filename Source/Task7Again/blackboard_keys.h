@@ -2,7 +2,8 @@
 #include "Runtime/Core/Public/UObject/NameTypes.h"
 #include "Runtime/Core/Public/Containers/UnrealString.h"
 
-namespace bb_keys
+namespace blackboard_keys
 {
-	TCHAR const* const targetLocation = TEXT("Target Location");
+	TCHAR const* const targetLocation = TEXT("TargetLocation");
+	TCHAR const* const canSeePlayer = TEXT("CanSeeplayer");
 }
