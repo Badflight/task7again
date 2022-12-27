@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "EnemyController.generated.h"
 
 /**
@@ -26,4 +27,12 @@ private:
 		class UBehaviorTree* Btree;
 
 	class UBlackboardComponent* blackboard;
+
+	class UAISenseConfig_Sight* sightConfig;
+
+	UFUNCTION()
+		void onUpdate(TArray<AActor*> const& updateActors);
+	UFUNCTION()
+		void onTargetDetected(AActor*actor, FAIStimulus const stimulus);
+	void setupPerceptionSystem();
 };

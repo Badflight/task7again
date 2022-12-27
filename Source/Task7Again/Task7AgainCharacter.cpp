@@ -7,6 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ATask7AgainCharacter
@@ -49,6 +51,7 @@ ATask7AgainCharacter::ATask7AgainCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	SetupStimulus();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,6 +78,13 @@ void ATask7AgainCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	// handle touch devices
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &ATask7AgainCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &ATask7AgainCharacter::TouchStopped);
+}
+
+void ATask7AgainCharacter::SetupStimulus()
+{
+	stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
+	stimulus->RegisterForSense(TSubclassOf < UAISense_Sight>());
+	stimulus->RegisterWithPerceptionSystem();
 }
 
 void ATask7AgainCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
