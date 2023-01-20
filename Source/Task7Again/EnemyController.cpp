@@ -24,6 +24,7 @@ AEnemyController::AEnemyController(FObjectInitializer const& object_initializer)
 	}
 	behaviorTreeComponent = object_initializer.CreateDefaultSubobject<UBehaviorTreeComponent>(this,TEXT("BehaviorComponent"));
 	blackboard = object_initializer.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackboardComponent"));
+	setupPerceptionSystem();
 }
 
 void AEnemyController::BeginPlay()
@@ -31,7 +32,7 @@ void AEnemyController::BeginPlay()
 	Super::BeginPlay();
 	RunBehaviorTree(Btree);
 	behaviorTreeComponent->StartTree(*Btree);
-	setupPerceptionSystem();
+	
 }
 
 void AEnemyController::OnPossess(APawn* const pawn)
@@ -64,17 +65,19 @@ void AEnemyController::onTargetDetected(AActor* actor, FAIStimulus const stimulu
 void AEnemyController::setupPerceptionSystem()
 {
 	sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
-	SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
-	sightConfig->SightRadius = 500.0f;
-	sightConfig->LoseSightRadius = sightConfig->SightRadius + 50.0f;
-	sightConfig->PeripheralVisionAngleDegrees = 90.0f;
-	sightConfig->SetMaxAge(5.0f);
-	sightConfig->AutoSuccessRangeFromLastSeenLocation = 900.0f;
-	sightConfig->DetectionByAffiliation.bDetectEnemies = true;
-	sightConfig->DetectionByAffiliation.bDetectFriendlies = true;
-	sightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+	if (sightConfig) {
+		SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
+		sightConfig->SightRadius = 500.0f;
+		sightConfig->LoseSightRadius = sightConfig->SightRadius + 50.0f;
+		sightConfig->PeripheralVisionAngleDegrees = 90.0f;
+		sightConfig->SetMaxAge(5.0f);
+		sightConfig->AutoSuccessRangeFromLastSeenLocation = 900.0f;
+		sightConfig->DetectionByAffiliation.bDetectEnemies = true;
+		sightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+		sightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 
-	GetPerceptionComponent()->SetDominantSense(*sightConfig->GetSenseImplementation());
-	GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyController::onTargetDetected);
-	GetPerceptionComponent()->ConfigureSense(*sightConfig);
+		GetPerceptionComponent()->SetDominantSense(*sightConfig->GetSenseImplementation());
+		GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyController::onTargetDetected);
+		GetPerceptionComponent()->ConfigureSense(*sightConfig);
+	}
 }

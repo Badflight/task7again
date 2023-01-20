@@ -82,6 +82,7 @@ void ATask7AgainCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 void ATask7AgainCharacter::SetupStimulus()
 {
+	//sets up the player to be detected within the perception system
 	stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
 	stimulus->RegisterForSense(TSubclassOf < UAISense_Sight>());
 	stimulus->RegisterWithPerceptionSystem();
