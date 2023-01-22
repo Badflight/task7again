@@ -16,19 +16,21 @@ UfindRandomLocation::UfindRandomLocation(FObjectInitializer const& object_initia
 
 EBTNodeResult::Type UfindRandomLocation::ExecuteTask(UBehaviorTreeComponent& owner_Comp, uint8* nodeMemory)
 {
-	auto const cont = Cast<AEnemyController>(owner_Comp.GetAIOwner());
-	auto const npc = cont->GetPawn();
-
+	//get the pawn and controller
+	auto const controller = Cast<AEnemyController>(owner_Comp.GetAIOwner());
+	auto const npc = controller->GetPawn();
+	//get the current location of the pawn
 	FVector const origin = npc->GetActorLocation();
-
+	//sets the nav ssytem
 	FNavLocation location;
 	UNavigationSystemV1* const navSys = UNavigationSystemV1::GetCurrent(GetWorld());
-	
+	//will set the random location based on the search radius and origin
 	if (navSys->GetRandomPointInNavigableRadius(origin, searchRadius, location, nullptr))
 	{
-		cont->get_blackboard()->SetValueAsVector(blackboard_keys::targetLocation, location.Location);
+		//will set the blackboard key for target location.
+		controller->get_blackboard()->SetValueAsVector(blackboard_keys::targetLocation, location.Location);
 	}
-
+	// will tell the tree when the task is compreted.
 	FinishLatentTask(owner_Comp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }
